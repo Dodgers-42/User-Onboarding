@@ -22,7 +22,7 @@ function App() {
     //   </header>
     // </div>
     <div>
-      {/* <Form form={Form} /> */}
+      <Form />
     </div>
   );
 }

@@ -1,112 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as yup from 'yup';
 import axios from "axios";
 
-const Form = () => {
+export default function Form() {
 
-    const initialState = {
-        name: '',
-        email: '',
-        password: '',
-        termsOfService: '',
-        submitButtom: '',
-    }
+    const [formState, setFormState] = useState({
+        name: "",
+        email: "",
+        terms: "",
+        password: "",
+        submitButtom: ""
+      });
+    
+      
+      const [errors, setErrors] = useState({
+          name: "",
+          email: "",
+          terms: "",
+          password: "",
+          submitButtom: ""
+      });
 
-//   return (
+      const formSchema = yup.object().shape({
+        name: yup.string().required("Name is required."),
+        email: yup.string()
+          .email("Must be a valid email address.")
+          .required("Must include email address."),
+        terms: yup.boolean().oneOf([true], "please agree to terms of use"),
+        password: yup.string().required("Password needed").min(10,"Password must be 10 characters"),
+      });
+      
+      const validateChange = e => {
+        e.persist();
 
-//   );  
-}
-
-const formSchema = yup.object().shape({
-    name: yup.string().required("Name is a required field."),
-    email: yup
-      .string()
-      .email("Must be a valid email address.")
-      .required("Must include email address."),
-    terms: yup.boolean().oneOf([true], "please agree to terms of use"),
-    positions: yup.string(),
-    motivation: yup.string().required("must include why you'd like to join")
-  });
+          yup
+            .reach(formSchema, e.target.name)
+            .validate(e.target.value)
+            .then(valid => {setErrors({...errors,[e.target.name]: ""});})
+            .catch(err => {setErrors({...errors,[e.target.name]: err.errors[0]});});
+        };
+      
+      useEffect(() => {
+      formSchema.isValid(user).then(valid => {setButtonDisabled(!valid);
+      });
+    }, [formSchema, user]);
   
-  export default function Form() {
-    // state for whether our button should be disabled or not.
+    const handleChange = e => {
+          const targetValue = 
+            e.target.type === "checkbox" ? e.target.checked : e.target.value;
+            setUser({
+                ...user,
+                [event.target.name]: targetValue
+            });
+            validateChange(event);
+          }
+      
+        
+    // const initialState = {
+    //     name: '',
+    //     email: '',
+    //     password: '',
+    //     terms: '',
+    //     submitButtom: '',
+    // }
+
+
+    const [user, setUser] = useState([]);
+
+    const [post, setPost] = useState([]);
+
     const [buttonDisabled, setButtonDisabled] = useState(true);
   
-    // managing state for our form inputs
-    const [formState, setFormState] = useState({
-      name: "",
-      email: "",
-      terms: "",
-      positions: "",
-      motivation: ""
-    });
-  
-    // state for our errors
-    const [errors, setErrors] = useState({
-      name: "",
-      email: "",
-      terms: "",
-      positions: "",
-      motivation: ""
-    });
-  
-    // new state to set our post request too. So we can console.log and see it.
-    const [post, setPost] = useState([]);
-  
-    useEffect(() => {
-      formSchema.isValid(formState).then(valid => {
-        setButtonDisabled(!valid);
-      });
-    }, [formState]);
-  
+    
     const formSubmit = e => {
       e.preventDefault();
       axios
         .post("https://reqres.in/api/users", formState)
         .then(res => {
           setPost(res.data); // get just the form data from the REST api
-          console.log("success", post);
+        //   console.log("success", post);
           // reset form if successful
           setFormState({
             name: "",
             email: "",
             terms: "",
-            positions: "",
-            motivation: ""
+            password: "",
+            submitButtom: ""
           });
         })
         .catch(err => console.log(err.response));
-    };
-  
-    const validateChange = e => {
-      // Reach will allow us to "reach" into the schema and test only one part.
-      yup
-        .reach(formSchema, e.target.name)
-        .validate(e.target.value)
-        .then(valid => {
-          setErrors({
-            ...errors,
-            [e.target.name]: ""
-          });
-        })
-        .catch(err => {
-          setErrors({
-            ...errors,
-            [e.target.name]: err.errors[0]
-          });
-        });
-    };
-  
-    const inputChange = e => {
-      e.persist();
-      const newFormData = {
-        ...formState,
-        [e.target.name]:
-          e.target.type === "checkbox" ? e.target.checked : e.target.value
-      };
-  
-      validateChange(e);
-      setFormState(newFormData);
     };
   
     return (
@@ -133,18 +115,18 @@ const formSchema = yup.object().shape({
             <p className='error'>{errors.email}</p>
           ) : null}
         </label>
-        <label htmlFor='motivation'>
+        <label htmlFor='submitButtom'>
           Why would you like to help?
           <textarea
-            name='motivation'
+            name='submitButtom'
             value={formState.motivation}
             onChange={inputChange}
           />
-          {errors.motivation.length > 0 ? (
-            <p className='error'>{errors.motivation}</p>
+          {errors.submitButtom.length > 0 ? (
+            <p className='error'>{errors.submitButtom}</p>
           ) : null}
         </label>
-        <label htmlFor='positions'>
+        <label htmlFor='password'>
           What would you like to help with?
           <select id='positions' name='positions' onChange={inputChange}>
             <option value='Newsletter'>Newsletter</option>
@@ -162,7 +144,7 @@ const formSchema = yup.object().shape({
           />
           Terms & Conditions
         </label>
-        {/* displaying our post request data */}
+        displaying our post request data
         <pre>{JSON.stringify(post, null, 2)}</pre>
         <button disabled={buttonDisabled}>Submit</button>
       </form>
@@ -171,4 +153,4 @@ const formSchema = yup.object().shape({
   
 
 
-export default Form;
+    // export default Form;
