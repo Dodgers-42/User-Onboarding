@@ -3,7 +3,10 @@ import * as yup from 'yup';
 import axios from "axios";
 
 export default function Form() {
-
+    const [user, setUser] = useState([]);
+    const [post, setPost] = useState([]);
+    const [buttonDisabled, setButtonDisabled] = useState(true);
+    
     const [formState, setFormState] = useState({
         name: "",
         email: "",
@@ -45,14 +48,14 @@ export default function Form() {
       });
     }, [formSchema, user]);
   
-    const handleChange = e => {
+    const inputChange = e => {
           const targetValue = 
             e.target.type === "checkbox" ? e.target.checked : e.target.value;
             setUser({
                 ...user,
-                [event.target.name]: targetValue
+                [e.target.name]: targetValue
             });
-            validateChange(event);
+            validateChange(e);
           }
       
         
@@ -65,12 +68,6 @@ export default function Form() {
     // }
 
 
-    const [user, setUser] = useState([]);
-
-    const [post, setPost] = useState([]);
-
-    const [buttonDisabled, setButtonDisabled] = useState(true);
-  
     
     const formSubmit = e => {
       e.preventDefault();
