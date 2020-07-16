@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import * as yup from 'yup';
-import axios from "axios";
 import Form from './Form';
 
 function App() {
@@ -24,7 +22,7 @@ function App() {
     //   </header>
     // </div>
     <div>
-
+      {/* <Form form={Form} /> */}
     </div>
   );
 }
