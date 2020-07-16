@@ -6,7 +6,7 @@ export default function Form() {
     const [user, setUser] = useState([]);
     const [post, setPost] = useState([]);
     const [buttonDisabled, setButtonDisabled] = useState(true);
-    
+
     const [formState, setFormState] = useState({
         name: "",
         email: "",
@@ -31,6 +31,7 @@ export default function Form() {
           .required("Must include email address."),
         terms: yup.boolean().oneOf([true], "please agree to terms of use"),
         password: yup.string().required("Password needed").min(10,"Password must be 10 characters"),
+        submitButtom:yup.string().required("")
       });
       
       const validateChange = e => {
@@ -74,9 +75,8 @@ export default function Form() {
       axios
         .post("https://reqres.in/api/users", formState)
         .then(res => {
-          setPost(res.data); // get just the form data from the REST api
+          setPost(res.data); 
         //   console.log("success", post);
-          // reset form if successful
           setFormState({
             name: "",
             email: "",
@@ -93,7 +93,7 @@ export default function Form() {
         <label htmlFor='name'>
           Name
           <input
-            type='text'
+            // type='text'
             name='name'
             value={formState.name}
             onChange={inputChange}
@@ -116,7 +116,7 @@ export default function Form() {
           Why would you like to help?
           <textarea
             name='submitButtom'
-            value={formState.motivation}
+            value={formState.submitButtom}
             onChange={inputChange}
           />
           {errors.submitButtom.length > 0 ? (
@@ -124,13 +124,20 @@ export default function Form() {
           ) : null}
         </label>
         <label htmlFor='password'>
-          What would you like to help with?
-          <select id='positions' name='positions' onChange={inputChange}>
+            Password
+        <label htmlFor='pwd' className='password'>
+            <input 
+                type="password" 
+                id="pwd" 
+                name="pwd"
+            />
+          {/* What would you like to help with? */}
+          {/* <select id='password' name='password' onChange={inputChange}>
             <option value='Newsletter'>Newsletter</option>
             <option value='Yard Work'>Yard Work</option>
             <option value='Administrative Work'>Administrative Work</option>
             <option value='Tabling'>Tabling</option>
-          </select>
+          </select> */}
         </label>
         <label htmlFor='terms' className='terms'>
           <input
@@ -141,10 +148,13 @@ export default function Form() {
           />
           Terms & Conditions
         </label>
-        displaying our post request data
+        {/* displaying our post request data */}
         <pre>{JSON.stringify(post, null, 2)}</pre>
-        <button disabled={buttonDisabled}>Submit</button>
+        <button type='submit'>Submit</button>
       </form>
+    //   <div>
+    //      <h2>{formState.name}</h2> 
+    //   </div>
     );
   }
   
